@@ -42,6 +42,15 @@ async def bulk_output(task_id):
             text_map[file_] = open(os.path.join(task_id, file_)).read()
     return {"task_id": task_id, "output": text_map}
 
+@app.get("/api/v1/output/{filename}")
+async def get_output(filename: str):
+    output_path = os.path.join("output", f"{filename}.txt")
+    if os.path.exists(output_path):
+        with open(output_path, "r") as file:
+            return {"filename": filename, "text": file.read()}
+    else:
+        return {"error": "File not found"}, 404
+
 def _save_file_to_disk(uploaded_file, path=".", save_as="default"):
     extension = os.path.splitext(uploaded_file.filename)[-1]
     temp_file = os.path.join(path, save_as + extension)
