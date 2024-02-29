@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <title>OCR Page</title>
@@ -62,17 +63,17 @@
       <h2>OCR Page</h2>
     </div>
    
-      <div class="input-group">
-        <label class="input-label" for="imageFile">Select an image file:</label>
-        <input class="btn btn-warning" type="file" id="image_file" name="myfile" multiple>
-      </div>
-      <button class="processing-button" onclick="performOCR()" type="submit">Process Image</button>
+    <div class="input-group">
+      <label class="input-label" for="imageFile">Select an image file:</label>
+      <input class="btn btn-warning" type="file" id="image_file" name="myfile" multiple>
+    </div>
+    <button class="processing-button" onclick="performOCR()" type="submit">Process Image</button>
 
   </div>
 
-    <hr style="width:100%;text-align:left;margin-left:0">
-    <hr style="width:100%;text-align:left;margin-left:0">
-    <div id="bulk_result" style="display: grid; grid-template-columns: repeat(5, 1fr); grid-gap: 10px;">
+  <hr style="width:100%;text-align:left;margin-left:0">
+  <hr style="width:100%;text-align:left;margin-left:0">
+  <div id="bulk_result" style="display: grid; grid-template-columns: repeat(5, 1fr); grid-gap: 10px;">
   </div>
 </body>
 
@@ -125,8 +126,8 @@
               element.setAttribute("class", "btn btn-primary")
               element.setAttribute("info", data.output[key])
               element.setAttribute("id", key)
-              element.setAttribute("onclick", "displayText(this.id)")
-              element.innerHTML = key
+              element.setAttribute("onclick", "displayText(this.getAttribute('info'))")
+              element.innerHTML = "Display Text " + key
               wrapper.appendChild(element)
             }
             if (Object.keys(data.output).length == numFiles) {
@@ -141,7 +142,8 @@
     }
   }
 
-function displayText(id) {
-  swal("Extracted Text", document.getElementById(id).getAttribute("info"))
-}
+  function displayText(extractedText) {
+    swal("Extracted Text", extractedText)
+  }
 </script>
+</html>
