@@ -62,17 +62,19 @@
       <h2>OCR Page</h2>
     </div>
    
-      <div class="input-group">
-        <label class="input-label" for="imageFile">Select an image file:</label>
-        <input class="btn btn-warning" type="file" id="image_file" name="myfile" multiple>
-      </div>
-      <button class="processing-button" onclick="performOCR()" type="submit">Process Image</button>
+    <div class="input-group">
+      <label class="input-label" for="imageFile">Select an image file:</label>
+      <input class="btn btn-warning" type="file" id="image_file" name="myfile" multiple>
+    </div>
+    <button class="processing-button" onclick="performOCR()" type="submit">Process Image</button>
+    <button class="processing-button" onclick="uploadImage()" type="button">Upload Image</button>
+    <button class="processing-button" onclick="deleteFile()" type="button">Delete File</button>
 
   </div>
 
-    <hr style="width:100%;text-align:left;margin-left:0">
-    <hr style="width:100%;text-align:left;margin-left:0">
-    <div id="bulk_result" style="display: grid; grid-template-columns: repeat(5, 1fr); grid-gap: 10px;">
+  <hr style="width:100%;text-align:left;margin-left:0">
+  <hr style="width:100%;text-align:left;margin-left:0">
+  <div id="bulk_result" style="display: grid; grid-template-columns: repeat(5, 1fr); grid-gap: 10px;">
   </div>
 </body>
 
@@ -110,6 +112,47 @@
     });
   }
 
+  function uploadImage() {
+    var files = document.getElementById("image_file").files;
+    if (files.length > 0) {
+      var formData = new FormData();
+      formData.append('image', files[0]);
+      $.ajax({
+        type: 'POST',
+        url: '/api/v1/upload_image',
+        data: formData,
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(data) {
+          swal("Success", data.info);
+        },
+        error: function(data) {
+          swal("Error", data.error);
+        }
+      });
+    }
+  }
+
+  function deleteFile() {
+    var filename = prompt("Enter the name of the file to delete:");
+    if (filename != null) {
+      $.ajax({
+        type: 'DELETE',
+        url: '/api/v1/delete_file/' + filename,
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(data) {
+          swal("Success", data.info);
+        },
+        error: function(data) {
+          swal("Error", data.error);
+        }
+      });
+    }
+  }
+
   function getConvertedFiles(taskID, numFiles) {
     var checker = setInterval(function(){
       $.ajax({
@@ -141,7 +184,8 @@
     }
   }
 
-function displayText(id) {
-  swal("Extracted Text", document.getElementById(id).getAttribute("info"))
-}
+  function displayText(id) {
+    swal("Extracted Text", document.getElementById(id).getAttribute("info"))
+  }
 </script>
+</html>

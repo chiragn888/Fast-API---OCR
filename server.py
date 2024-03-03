@@ -42,6 +42,28 @@ async def bulk_output(task_id):
             text_map[file_] = open(os.path.join(task_id, file_)).read()
     return {"task_id": task_id, "output": text_map}
 
+@app.post("/api/v1/upload_image")
+async def upload_image(image: UploadFile = File(...)):
+    try:
+        file_location = f"images/{image.filename}"
+        with open(file_location, "wb") as file:
+            shutil.copyfileobj(image.file, file)
+        return {"info": f"file '{image.filename}' saved at '{file_location}'"}
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.delete("/api/v1/delete_file/{filename}")
+async def delete_file(filename: str):
+    file_location = f"images/{filename}"
+    try:
+        if os.path.exists(file_location):
+            os.remove(file_location)
+            return {"info": f"file '{filename}' has been deleted"}
+        else:
+            return {"error": "file not found"}
+    except Exception as e:
+        return {"error": str(e)}
+
 def _save_file_to_disk(uploaded_file, path=".", save_as="default"):
     extension = os.path.splitext(uploaded_file.filename)[-1]
     temp_file = os.path.join(path, save_as + extension)
